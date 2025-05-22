@@ -1,50 +1,58 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Proste wejście znaku</title>
-  <style>
-    body{
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      height:100vh;margin:0;font-family:sans-serif;background:#f0f0f0;
-    }
-    #response{
-      margin-top:1em;padding:.5em 1em;background:#fff;border:1px solid #ccc;
-      border-radius:4px;min-width:200px;text-align:center;
-    }
-    input{width:2em;text-align:center;font-size:1.2em;}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Proste wejście znaku</title>
+<style>
+  body{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    height:100vh;margin:0;font-family:sans-serif;background:#f0f0f0;
+  }
+  #response{
+    margin-top:1em;padding:.5em 1em;background:#fff;border:1px solid #ccc;
+    border-radius:4px;min-width:220px;text-align:center;
+  }
+  input{width:2em;text-align:center;font-size:1.2em;}
+</style>
 </head>
 <body>
 
-  <label for="charInput">Wpisz znak:</label>
-  <input id="charInput" type="text" maxlength="1" autocomplete="off">
-  <button id="submitBtn">Wyślij</button>
+<label for="charInput">Wpisz znak:</label>
+<input id="charInput" type="text" maxlength="1" autocomplete="off">
+<button id="submitBtn">Wyślij</button>
 
-  <div id="response">– tu pojawi się odpowiedź –</div>
+<div id="response">– tu pojawi się odpowiedź –</div>
 
 <script>
-  const input = document.getElementById('charInput');
-  const btn   = document.getElementById('submitBtn');
-  const resp  = document.getElementById('response');
+const input = document.getElementById('charInput');
+const btn   = document.getElementById('submitBtn');
+const resp  = document.getElementById('response');
 
-  function handle(){
-    const znak = input.value.trim();
-    if(!znak){
-      resp.textContent = 'Nie wpisałeś żadnego znaku!';
-    }else{
-      // tu Twoja logika odpowiedzi:
-      resp.textContent = `Wpisałeś znak: "${znak}"`;
-    }
-    input.value = '';        // wyczyść pole
-    input.blur();            // *** schowaj klawiaturę ekranową ***
+function closeKeyboard() {
+  /* trik: pole staje się na moment readonly, wtedy klawiatura się zamyka */
+  input.setAttribute('readonly', true);
+  input.blur();                       // traci fokus
+  /* po 150 ms przywracamy normalny stan */
+  setTimeout(() => input.removeAttribute('readonly'), 150);
+}
+
+function handle(){
+  const znak = input.value.trim();
+  if(!znak){
+    resp.textContent = 'Nie wpisałeś żadnego znaku!';
+  }else{
+    // tu możesz wstawić dowolną logikę odpowiedzi
+    resp.textContent = `Wpisałeś znak: "${znak}"`;
   }
+  input.value = '';
+  closeKeyboard();                    // <- zamknięcie klawiatury
+}
 
-  btn.addEventListener('click', handle);
-  input.addEventListener('keydown', e=>{
-    if(e.key==='Enter') handle();
-  });
+btn.addEventListener('click', handle);
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') handle();
+});
 </script>
 
 </body>
